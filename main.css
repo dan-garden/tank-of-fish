@@ -1,0 +1,221 @@
+.hidden
+{
+display:none;
+}
+
+#menu_select
+{
+-webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
+-moz-box-sizing: border-box;    /* Firefox, other Gecko */
+box-sizing: border-box;         /* Opera/IE 8+ */
+padding:10px;
+border:solid 1px black;
+background: #e2e2e2; /* Old browsers */
+background: -moz-linear-gradient(top, #e2e2e2 0%, #dbdbdb 50%, #d1d1d1 51%, #fefefe 100%); /* FF3.6+ */
+background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#e2e2e2), color-stop(50%,#dbdbdb), color-stop(51%,#d1d1d1), color-stop(100%,#fefefe)); /* Chrome,Safari4+ */
+background: -webkit-linear-gradient(top, #e2e2e2 0%,#dbdbdb 50%,#d1d1d1 51%,#fefefe 100%); /* Chrome10+,Safari5.1+ */
+background: -o-linear-gradient(top, #e2e2e2 0%,#dbdbdb 50%,#d1d1d1 51%,#fefefe 100%); /* Opera 11.10+ */
+background: -ms-linear-gradient(top, #e2e2e2 0%,#dbdbdb 50%,#d1d1d1 51%,#fefefe 100%); /* IE10+ */
+background: linear-gradient(to bottom, #e2e2e2 0%,#dbdbdb 50%,#d1d1d1 51%,#fefefe 100%); /* W3C */
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#e2e2e2', endColorstr='#fefefe',GradientType=0 ); /* IE6-9 */
+border-bottom:none;
+}
+
+#menu_select li
+{
+padding:5px;
+border:solid 1px #878787;
+-webkit-border-radius: 100px;
+-moz-border-radius: 100px;
+border-radius: 100px;
+}
+
+#menu_select li:hover
+{
+background-color:#C4E7FF;
+}
+
+.menu_active
+{
+width:100%;
+-webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
+-moz-box-sizing: border-box;    /* Firefox, other Gecko */
+box-sizing: border-box;         /* Opera/IE 8+ */
+color:#6E6E6E;
+font-size:16px;
+font-family:verdana;
+padding:10px;
+border-bottom:solid 1px black;
+background: #e2e2e2; /* Old browsers */
+background: -moz-linear-gradient(top, #e2e2e2 0%, #dbdbdb 50%, #d1d1d1 51%, #fefefe 100%); /* FF3.6+ */
+background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#e2e2e2), color-stop(50%,#dbdbdb), color-stop(51%,#d1d1d1), color-stop(100%,#fefefe)); /* Chrome,Safari4+ */
+background: -webkit-linear-gradient(top, #e2e2e2 0%,#dbdbdb 50%,#d1d1d1 51%,#fefefe 100%); /* Chrome10+,Safari5.1+ */
+background: -o-linear-gradient(top, #e2e2e2 0%,#dbdbdb 50%,#d1d1d1 51%,#fefefe 100%); /* Opera 11.10+ */
+background: -ms-linear-gradient(top, #e2e2e2 0%,#dbdbdb 50%,#d1d1d1 51%,#fefefe 100%); /* IE10+ */
+background: linear-gradient(to bottom, #e2e2e2 0%,#dbdbdb 50%,#d1d1d1 51%,#fefefe 100%); /* W3C */
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#e2e2e2', endColorstr='#fefefe',GradientType=0 ); /* IE6-9 */
+}
+
+
+#menu_overlay .menu_active
+{
+position:relative;
+top:0px;
+left:0px;
+z-index:100000;
+}
+
+#menu_overlay .close
+{
+float:right;
+cursor:pointer;
+display:none;
+}
+
+#coins
+{
+color:black;
+text-shadow:1px 1px 1px white;
+font-family:verdana;
+font-size:16px;
+}
+
+#animated_overlay
+{
+width:100%;
+height:100%;
+background-image:url(images/tank_overlay.gif);
+opacity:0.2;
+position:absolute;
+top:0px;
+left:0px;
+}
+
+ul
+{
+list-style-type:none;
+margin:0;
+padding:0;
+}
+li
+{
+display:inline-block;
+}
+
+.fishSelect
+{
+margin:0px 10px;
+cursor:pointer;
+outline:none;
+}
+
+.fishSelect:hover
+{
+opacity:0.8;
+}
+
+#fish_tank
+{
+width:100%;
+height:400px;
+border:solid 1px black;
+position:relative;
+background-image:url(images/tank_1.png);
+background-repeat:no-repeat;
+background-size:cover;
+-webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
+-moz-box-sizing: border-box;    /* Firefox, other Gecko */
+box-sizing: border-box;         /* Opera/IE 8+ */
+}
+
+.fish
+{
+position:absolute;
+cursor:pointer;
+ background-repeat:no-repeat;
+}
+
+.fish:hover
+{
+opacity:0.8;
+}
+
+.right
+{
+-moz-transform: scaleX(-1);
+    -webkit-transform: scaleX(-1);
+    -o-transform: scaleX(-1);
+    transform: scaleX(-1);
+    -ms-filter: fliph; /*IE*/
+    filter: fliph; /*IE*/
+}
+
+.right .fishName
+{
+-moz-transform: scaleX(-1);
+    -webkit-transform: scaleX(-1);
+    -o-transform: scaleX(-1);
+    transform: scaleX(-1);
+    -ms-filter: fliph; /*IE*/
+    filter: fliph; /*IE*/
+}
+
+.right .growth
+{
+-moz-transform: scaleX(-1);
+    -webkit-transform: scaleX(-1);
+    -o-transform: scaleX(-1);
+    transform: scaleX(-1);
+    -ms-filter: fliph; /*IE*/
+    filter: fliph; /*IE*/
+}
+
+.fishName
+{
+position:absolute;
+width:200%;
+text-align:center;
+left:-50%;
+top:120%;
+height:100%;
+text-align:center;
+padding-left:10%;
+padding-right:10%;
+font-size:10px;
+font-family:arial;
+color:white;
+}
+
+.growth
+{
+display:block;
+margin-top:-10px;
+width:30px;
+height:5px;
+background-color:black;
+}
+
+.inner_growth
+{
+background-color:lime;
+height:100%;
+}
+
+/*FISH*/
+
+.goldfish{background-image:url(fish/goldfish.png);width:41px;height:19px;}
+.clownfish{background-image:url(fish/clownfish.png);width:41px;height:19px;}
+.crownfish{background-image:url(fish/crownfish.png);width:50px;height:60px;}
+.neonfish{background-image:url(fish/neonfish.png);width:45px;height:19px;}
+.neonfish_2{background-image:url(fish/neonfish_2.png);width:45px;height:19px;}
+.neonfish_3{background-image:url(fish/neonfish_3.png);width:45px;height:19px;}
+.bass{background-image:url(fish/bass.png);width:52px;height:20px;}
+.marlin{background-image:url(fish/marlin.png);width:80px;height:20px;}
+.starfish{background-image:url(fish/starfish.png);width:30px;height:30px;}
+.jellyfish{background-image:url(fish/jellyfish.png);width:30px;height:30px;opacity:0.8;}
+
+
+
+
+
+

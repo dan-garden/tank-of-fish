@@ -1,0 +1,70 @@
+<html>
+<head>
+<link rel="stylesheet" type="text/css" href="main.css">
+
+<script src="jquery-latest.js"></script>
+<script src="javascript.js"></script>
+
+</head>
+<body>
+<div id="menu">
+<ul id="menu_select">
+<li title="Add fish to tank"><a href="javascript:menu('addfish');"><img src="images/menu_addfish.png" /></a></li>
+<li title="Settings"><a href="javascript:menu('settings');"><img src="images/menu_settings.png" /></a></li>
+<img style="float:right;padding:10px;" src="images/menu_coin.png" />
+<div id="coins" style="float:right;margin-top:15px;"></div>
+</ul>
+
+</div>
+
+
+
+
+
+<div id="fish_tank">
+
+<div id="menu_overlay">
+
+<div id="addfish" class="hidden menu_active">
+Add fish to tank
+<button class="close" onclick="closeMenu();">Close</button>
+<hr />
+<ul id="fishSelect">
+</ul>
+</div>
+
+<div id="settings" class="hidden menu_active">
+Settings
+<button class="close" onclick="closeMenu();">Close</button>
+<hr />
+<button onclick="toggleNames();">Toggle Fish Names</button>
+</div>
+
+<div id="fishStats" class="hidden menu_active">
+Fish Stats
+<button class="close" onclick="closeMenu();">Close</button>
+<hr />
+<div style="font-size:14px;">
+
+<b>Fish Name: </b> <span id="stat_name"></span><br /><br />
+<b>Fish Type: </b><span id="stat_type"></span><br /><br />
+<b>Growth: </b><span id="stat_growth"></span><br /><br />
+<hr />
+<button id="sellFish" onclick="sellFish()"></button><button onclick="closeMenu();">Close</button>
+
+
+
+
+</div>
+</div>
+
+
+</div>
+
+
+<div id="animated_overlay">
+</div>
+</div>
+
+</body>
+</html>
