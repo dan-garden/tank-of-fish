@@ -15,6 +15,7 @@ class FishGame {
     this.lastIncomeTime = Date.now();
     this.decorations = new Map();
     this.pendingDecoration = null;
+    this.unlockedHybrids = new Set();
     this.init();
   }
 
@@ -68,6 +69,7 @@ class FishGame {
       fish: fishStates,
       breedingCooldowns: Array.from(this.breedingCooldowns.entries()),
       decorations: decorationStates,
+      unlockedHybrids: Array.from(this.unlockedHybrids),
       lastSaved: Date.now()
     };
 
@@ -86,6 +88,9 @@ class FishGame {
     this.coins = gameState.coins;
     this.showNames = gameState.showNames;
     this.selectedFishId = null;
+
+    // Restore unlocked hybrids
+    this.unlockedHybrids = new Set(gameState.unlockedHybrids || []);
 
     // Restore breeding cooldowns
     this.breedingCooldowns = new Map(gameState.breedingCooldowns);
@@ -225,15 +230,18 @@ class FishGame {
     // Clear existing fish
     fishSelect.innerHTML = '';
 
-    // Create fish elements
-    GAME_CONFIG.fishTypes.forEach((fish, index) => {
-      // Skip hybrid fish types which are only obtainable through breeding
-      if (fish.isHybrid) return;
+    // Get available fish and sort by price
+    const availableFish = GAME_CONFIG.fishTypes
+      .filter(fish => !fish.isHybrid || this.unlockedHybrids.has(fish.name)) // Show non-hybrids and unlocked hybrids
+      .sort((a, b) => Number(a.basePrice) - Number(b.basePrice));
 
+    // Create fish elements
+    availableFish.forEach((fish, index) => {
       const li = document.createElement('li');
-      li.title = `${fish.displayName}\nPrice: ${fish.basePrice} coins\nRarity: ${fish.rarity.charAt(0).toUpperCase() + fish.rarity.slice(1)}`;
-      li.className = `fishSelect ${fish.rarity}`;
+      li.title = `${fish.displayName}\nPrice: ${fish.basePrice} coins\nRarity: ${fish.rarity.charAt(0).toUpperCase() + fish.rarity.slice(1)}${fish.isHybrid ? '\n(Hybrid Fish - Unlocked through breeding!)' : ''}`;
+      li.className = `fishSelect ${fish.rarity}${fish.isHybrid ? ' hybrid' : ''}`;
       li.dataset.rarity = fish.rarity;
+      li.dataset.isHybrid = fish.isHybrid;
 
       const fishDiv = document.createElement('div');
       fishDiv.className = `${fish.name} left fish-image`;
@@ -246,10 +254,21 @@ class FishGame {
       priceDiv.className = 'fish-price';
       priceDiv.innerHTML = `<i class="fas fa-coins"></i> ${fish.basePrice}`;
 
+      // Add hybrid indicator if it's a hybrid fish
+      if (fish.isHybrid) {
+        const hybridDiv = document.createElement('div');
+        hybridDiv.className = 'hybrid-indicator';
+        hybridDiv.innerHTML = '<i class="fas fa-dna"></i>';
+        li.appendChild(hybridDiv);
+      }
+
       li.appendChild(fishDiv);
       li.appendChild(nameDiv);
       li.appendChild(priceDiv);
-      li.addEventListener('click', () => this.addFish(fish.name, index));
+
+      // Find the original index in GAME_CONFIG.fishTypes for proper reference
+      const originalIndex = GAME_CONFIG.fishTypes.findIndex(f => f.name === fish.name);
+      li.addEventListener('click', () => this.addFish(fish.name, originalIndex));
       fishSelect.appendChild(li);
     });
 
@@ -942,6 +961,13 @@ class FishGame {
 
       if (offspringIndex === -1) return;
 
+      // Add the offspring type to unlockedHybrids if it's a hybrid
+      const offspringFishType = GAME_CONFIG.fishTypes[offspringIndex];
+      if (offspringFishType.isHybrid) {
+        this.unlockedHybrids.add(offspringType);
+        this.saveGameState(); // Save the game state to persist the unlocked hybrid
+      }
+
       // Generate a random name for the offspring
       const baseName = offspringType.replace(/_/g, ' ');
       const randomNum = Math.floor(Math.random() * 1000);
@@ -971,7 +997,11 @@ class FishGame {
       // Show new fish tooltip
       const newFish = document.getElementById(`fish_${this.fishId}`);
       if (newFish) {
-        this.showStatusTooltip(newFish, 'success', '🎉 New fish born!');
+        const unlockMessage = offspringFishType.isHybrid ? '🎉 New hybrid fish unlocked!' : '🎉 New fish born!';
+        this.showStatusTooltip(newFish, 'success', unlockMessage);
+        if (offspringFishType.isHybrid) {
+          this.showToast(`Unlocked new hybrid fish: ${offspringFishType.displayName}! 🧬`, 'success');
+        }
       }
 
       this.showToast('A new fish has been born! 🎉', 'success');
@@ -1222,7 +1252,12 @@ class FishGame {
     if (!grid) return;
 
     grid.innerHTML = '';
-    GAME_CONFIG.decorations.forEach(decoration => {
+
+    // Sort decorations by price
+    const sortedDecorations = [...GAME_CONFIG.decorations]
+      .sort((a, b) => Number(a.price) - Number(b.price));
+
+    sortedDecorations.forEach(decoration => {
       const item = document.createElement('div');
       item.className = 'decoration-item';
       item.dataset.name = decoration.name;
