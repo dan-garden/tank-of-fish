@@ -1,70 +1,280 @@
+<!DOCTYPE html>
 <html>
+
 <head>
-<link rel="stylesheet" type="text/css" href="main.css">
-
-<script src="jquery-latest.js"></script>
-<script src="javascript.js"></script>
-
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fish Tank Game</title>
+  <link rel="stylesheet" type="text/css" href="main.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
+
 <body>
-<div id="menu">
-<ul id="menu_select">
-<li title="Add fish to tank"><a href="javascript:menu('addfish');"><img src="images/menu_addfish.png" /></a></li>
-<li title="Settings"><a href="javascript:menu('settings');"><img src="images/menu_settings.png" /></a></li>
-<img style="float:right;padding:10px;" src="images/menu_coin.png" />
-<div id="coins" style="float:right;margin-top:15px;"></div>
-</ul>
+  <div class="game-container">
+    <header class="game-header">
+      <nav class="game-nav">
+        <div class="nav-buttons">
+          <button class="nav-button" id="addFishButton">
+            <i class="fas fa-fish"></i> Add Fish
+          </button>
+          <button class="nav-button" id="feedFishButton">
+            <i class="fas fa-cookie"></i> Feed Fish
+          </button>
+          <button class="nav-button" id="decorationsButton">
+            <i class="fas fa-tree"></i> Decorations
+          </button>
+          <button class="nav-button" id="settingsButton">
+            <i class="fas fa-cog"></i> Settings
+          </button>
+        </div>
+        <div class="coins-display">
+          <i class="fas fa-coins"></i>
+          <span id="coins">0</span>
+        </div>
+      </nav>
+    </header>
 
-</div>
+    <main class="game-main">
+      <div id="fish_tank" class="fish-tank">
+        <div id="animated_overlay" class="animated-overlay"></div>
+      </div>
+    </main>
 
+    <!-- Modals -->
+    <div class="modal" id="addFishModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>Add Fish</h2>
+          <button class="close-modal">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div class="fish-filters">
+            <button class="category-filter active" data-rarity="all">All</button>
+            <button class="category-filter" data-rarity="common">Common</button>
+            <button class="category-filter" data-rarity="uncommon">Uncommon</button>
+            <button class="category-filter" data-rarity="rare">Rare</button>
+            <button class="category-filter" data-rarity="epic">Epic</button>
+            <button class="category-filter" data-rarity="legendary">Legendary</button>
+          </div>
+          <div class="fish-grid-container">
+            <ul id="fishSelect" class="fish-grid"></ul>
+          </div>
+          <div class="fish-instructions">
+            <p>Click to purchase a fish. Rarer fish are more valuable!</p>
+            <p>Some special fish can only be obtained through breeding.</p>
+          </div>
+        </div>
+      </div>
+    </div>
 
+    <!-- Feed Fish Modal -->
+    <div class="modal" id="feedFishModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>Feed Fish</h2>
+          <button class="close-modal">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div class="food-grid">
+            <div class="food-item" data-food="basic_pellet">
+              <div class="food-icon basic-pellet"></div>
+              <div class="food-info">
+                <h3>Basic Pellet</h3>
+                <p>Restores hunger and provides basic nutrition</p>
+                <div class="bonus">+10 Hunger</div>
+                <div class="price">50 <i class="fas fa-coins"></i></div>
+              </div>
+            </div>
+            <div class="food-item" data-food="premium_pellet">
+              <div class="food-icon premium-pellet"></div>
+              <div class="food-info">
+                <h3>Premium Pellet</h3>
+                <p>Enhanced nutrition for faster growth</p>
+                <div class="bonus">+15 Hunger, +20% Growth</div>
+                <div class="price">100 <i class="fas fa-coins"></i></div>
+              </div>
+            </div>
+            <div class="food-item" data-food="breeding_pellet">
+              <div class="food-icon breeding-pellet"></div>
+              <div class="food-info">
+                <h3>Breeding Pellet</h3>
+                <p>Increases breeding success rate</p>
+                <div class="bonus">+15 Hunger, +100% Breeding</div>
+                <div class="price">150 <i class="fas fa-coins"></i></div>
+              </div>
+            </div>
+            <div class="food-item" data-food="golden_pellet">
+              <div class="food-icon golden-pellet"></div>
+              <div class="food-info">
+                <h3>Golden Pellet</h3>
+                <p>Maximizes growth and value potential</p>
+                <div class="bonus">+20 Hunger, +50% Growth, +30% Value</div>
+                <div class="price">200 <i class="fas fa-coins"></i></div>
+              </div>
+            </div>
+            <div class="food-item" data-food="rainbow_pellet">
+              <div class="food-icon rainbow-pellet"></div>
+              <div class="food-info">
+                <h3>Rainbow Pellet</h3>
+                <p>Provides all-around benefits</p>
+                <div class="bonus">+20 Hunger, +30% Growth, +50% Breeding</div>
+                <div class="price">250 <i class="fas fa-coins"></i></div>
+              </div>
+            </div>
+            <div class="food-item" data-food="crystal_pellet">
+              <div class="food-icon crystal-pellet"></div>
+              <div class="food-info">
+                <h3>Crystal Pellet</h3>
+                <p>Premium food with maximum benefits</p>
+                <div class="bonus">+25 Hunger, +50% Growth, +100% Breeding</div>
+                <div class="price">300 <i class="fas fa-coins"></i></div>
+              </div>
+            </div>
+          </div>
+          <div class="food-instructions">
+            <p>Click on a food type to feed your fish</p>
+            <p>Different foods provide various benefits</p>
+            <p>Feeding regularly keeps your fish healthy and growing</p>
+          </div>
+        </div>
+      </div>
+    </div>
 
+    <div class="modal" id="settingsModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>Settings</h2>
+          <button class="close-modal">&times;</button>
+        </div>
+        <div class="modal-body">
+          <button class="toggle-names button">Toggle Fish Names</button>
+          <div class="settings-divider"></div>
+          <button class="reset-game button danger">Reset Game</button>
+          <p class="reset-warning">Warning: This will delete all progress!</p>
+        </div>
+      </div>
+    </div>
 
+    <div id="fishStatsModal" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>Fish Stats</h2>
+          <button class="close-modal">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div class="fish-stats">
+            <div class="stats-section basic-info">
+              <h3>Basic Information</h3>
+              <div class="stat-row">
+                <label>Name:</label>
+                <span id="stat_name"></span>
+              </div>
+              <div class="stat-row">
+                <label>Type:</label>
+                <span id="stat_type"></span>
+              </div>
+              <div class="stat-row">
+                <label>Rarity:</label>
+                <span id="stat_rarity"></span>
+              </div>
+            </div>
 
-<div id="fish_tank">
+            <div class="stats-section status">
+              <h3>Current Status</h3>
+              <div class="stat-row">
+                <label>Growth:</label>
+                <span id="stat_growth"></span>
+                <div class="growth-bar">
+                  <div class="growth-progress"></div>
+                </div>
+              </div>
+              <div class="stat-row">
+                <label>Hunger:</label>
+                <span id="stat_hunger"></span>
+                <div class="hunger-bar">
+                  <div class="hunger-progress"></div>
+                </div>
+              </div>
+            </div>
 
-<div id="menu_overlay">
+            <div class="stats-section breeding-info">
+              <h3>Breeding Information</h3>
+              <div class="stat-row">
+                <label>Can Breed:</label>
+                <span id="stat_can_breed"></span>
+              </div>
+              <div class="stat-row">
+                <label>Compatible With:</label>
+                <div id="breeding_partners" class="breeding-partners"></div>
+              </div>
+              <div class="stat-row">
+                <label>Cooldown:</label>
+                <span id="stat_breeding_cooldown"></span>
+              </div>
+            </div>
 
-<div id="addfish" class="hidden menu_active">
-Add fish to tank
-<button class="close" onclick="closeMenu();">Close</button>
-<hr />
-<ul id="fishSelect">
-</ul>
-</div>
+            <button id="sellFish" class="button danger">Sell Fish</button>
+          </div>
+        </div>
+      </div>
+    </div>
 
-<div id="settings" class="hidden menu_active">
-Settings
-<button class="close" onclick="closeMenu();">Close</button>
-<hr />
-<button onclick="toggleNames();">Toggle Fish Names</button>
-</div>
+    <!-- Input Modal -->
+    <div class="modal" id="inputModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>Name Your Fish</h2>
+          <button class="close-modal">&times;</button>
+        </div>
+        <div class="modal-body">
+          <form id="inputForm" class="input-form">
+            <div class="form-group">
+              <label for="fishNameInput">Give your new fish a name:</label>
+              <input type="text" id="fishNameInput" class="form-input" placeholder="Enter fish name" maxlength="20"
+                required>
+            </div>
+            <div class="form-actions">
+              <button type="submit" class="button">Add Fish</button>
+              <button type="button" class="button outline" onclick="game.closeModal('inputModal')">Cancel</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
 
-<div id="fishStats" class="hidden menu_active">
-Fish Stats
-<button class="close" onclick="closeMenu();">Close</button>
-<hr />
-<div style="font-size:14px;">
+    <!-- Decorations Modal -->
+    <div class="modal" id="decorationsModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>Tank Decorations</h2>
+          <button class="close-modal">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div class="decoration-filters">
+            <button class="category-filter active" data-category="all">All</button>
+            <button class="category-filter" data-category="plants">Plants</button>
+            <button class="category-filter" data-category="rocks">Rocks</button>
+            <button class="category-filter" data-category="buildings">Buildings</button>
+            <button class="category-filter" data-category="decorative">Decorative</button>
+          </div>
+          <div class="decoration-grid-container">
+            <div class="decoration-grid">
+              <!-- Decoration items will be added here dynamically -->
+            </div>
+          </div>
+          <div class="decoration-instructions">
+            <p>Click to purchase decorations. Drag them in the tank to reposition.</p>
+            <p>Decorations provide bonuses to nearby fish!</p>
+          </div>
+        </div>
+      </div>
+    </div>
 
-<b>Fish Name: </b> <span id="stat_name"></span><br /><br />
-<b>Fish Type: </b><span id="stat_type"></span><br /><br />
-<b>Growth: </b><span id="stat_growth"></span><br /><br />
-<hr />
-<button id="sellFish" onclick="sellFish()"></button><button onclick="closeMenu();">Close</button>
-
-
-
-
-</div>
-</div>
-
-
-</div>
-
-
-<div id="animated_overlay">
-</div>
-</div>
-
+    <!-- Toast Notifications -->
+    <div id="toast" class="toast"></div>
+  </div>
+  <script type="module" src="javascript.js"></script>
 </body>
+
 </html>
