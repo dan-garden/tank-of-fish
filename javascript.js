@@ -16,6 +16,12 @@ class FishGame {
     this.decorations = new Map();
     this.pendingDecoration = null;
     this.unlockedHybrids = new Set();
+    // Add new properties for optimization
+    this.activeTooltips = new Set();
+    this.maxActiveTooltips = 5; // Maximum number of tooltips to show at once
+    this.activeTimers = new Set(); // Track setTimeout/setInterval IDs
+    this.bonusCache = new Map(); // Cache decoration bonus calculations
+    this.bonusCacheTimeout = 1000; // How long to cache bonus calculations (ms)
     this.init();
   }
 
@@ -130,6 +136,11 @@ class FishGame {
 
         fishTank.appendChild(decorationElement);
         this.decorations.set(decoration.id, decoration);
+
+        // Restart auto-feeder if applicable
+        if (decoration.isAutoFeeder) {
+          this.startAutoFeeder(decoration.id);
+        }
       });
     }
 
@@ -138,7 +149,7 @@ class FishGame {
     gameState.fish.forEach(fishState => {
       const fishElement = document.createElement('div');
       fishElement.id = `fish_${fishState.id}`;
-      fishElement.className = `${fishState.type} fish`;
+      fishElement.className = `${fishState.type} fish${fishState.isHybrid ? ' hybrid' : ''}`;
       fishElement.dataset.place = fishState.typeIndex;
       fishElement.dataset.name = fishState.name;
       fishElement.dataset.id = fishState.id;
@@ -149,6 +160,9 @@ class FishGame {
       if (fishState.valueBonus) {
         fishElement.dataset.valueBonus = fishState.valueBonus.toString();
       }
+      fishElement.dataset.isHybrid = (fishState.isHybrid ?? false).toString();
+      fishElement.style.width = `${GAME_CONFIG.fishTypes.find(f => f.name === fishState.type).width}px`;
+      fishElement.style.height = `${GAME_CONFIG.fishTypes.find(f => f.name === fishState.type).height}px`;
 
       // Position the fish
       fishElement.style.left = fishState.position.left;
@@ -186,8 +200,9 @@ class FishGame {
 
       // Add click event listener
       fishElement.addEventListener('click', () => {
-        this.selectedFishId = fishState.id;
-        this.updateFishStats(fishState.id, fishState.typeIndex);
+        this.selectedFishId = parseInt(fishState.id);
+        const actualTypeIndex = GAME_CONFIG.fishTypes.findIndex(f => f.name === fishState.type);
+        this.updateFishStats(parseInt(fishState.id), actualTypeIndex);
         this.openModal('fishStatsModal');
       });
 
@@ -232,7 +247,7 @@ class FishGame {
 
     // Get available fish and sort by price
     const availableFish = GAME_CONFIG.fishTypes
-      .filter(fish => !fish.isHybrid || this.unlockedHybrids.has(fish.name)) // Show non-hybrids and unlocked hybrids
+      .filter(fish => !fish.isHybrid || this.unlockedHybrids.has(fish.name))
       .sort((a, b) => Number(a.basePrice) - Number(b.basePrice));
 
     // Create fish elements
@@ -244,7 +259,7 @@ class FishGame {
       li.dataset.isHybrid = fish.isHybrid;
 
       const fishDiv = document.createElement('div');
-      fishDiv.className = `${fish.name} left fish-image`;
+      fishDiv.className = `${fish.name} left fish-image${fish.isHybrid ? ' hybrid' : ''}`;
 
       const nameDiv = document.createElement('div');
       nameDiv.className = 'fish-name';
@@ -406,7 +421,7 @@ class FishGame {
     }
 
     // Store the fish type and index for later use
-    this.pendingFish = { type, typeIndex };
+    this.pendingFish = { type, typeIndex, isHybrid: fishType.isHybrid };
 
     // Show the input modal
     this.openModal('inputModal');
@@ -420,7 +435,7 @@ class FishGame {
   createFish(name) {
     if (!this.pendingFish) return;
 
-    const { type, typeIndex, position } = this.pendingFish;
+    const { type, typeIndex, position, isHybrid } = this.pendingFish;
     const fishType = GAME_CONFIG.fishTypes[typeIndex];
 
     // Clean up the fish name
@@ -431,7 +446,7 @@ class FishGame {
 
     const fishElement = document.createElement('div');
     fishElement.id = `fish_${this.fishId}`;
-    fishElement.className = `${type} fish`;
+    fishElement.className = `${type} fish${isHybrid ? ' hybrid' : ''}`;
     fishElement.dataset.place = typeIndex;
     fishElement.dataset.name = fishName;
     fishElement.dataset.id = this.fishId;
@@ -440,6 +455,9 @@ class FishGame {
     fishElement.dataset.hunger = '100';
     fishElement.dataset.growthBonus = '0';
     fishElement.dataset.rarity = fishType.rarity;
+    fishElement.dataset.isHybrid = (isHybrid ?? false).toString();
+    fishElement.style.width = `${fishType.width}px`;
+    fishElement.style.height = `${fishType.height}px`;
 
     // Position the fish at the specified location or center of tank if not specified
     if (position) {
@@ -476,8 +494,10 @@ class FishGame {
     fishElement.appendChild(breedingIndicator);
 
     fishElement.addEventListener('click', () => {
-      this.selectedFishId = this.fishId;
-      this.updateFishStats(this.fishId, typeIndex);
+      const fishId = parseInt(fishElement.dataset.id);
+      this.selectedFishId = fishId;
+      const actualTypeIndex = GAME_CONFIG.fishTypes.findIndex(f => f.name === type);
+      this.updateFishStats(fishId, actualTypeIndex);
       this.openModal('fishStatsModal');
     });
 
@@ -575,8 +595,21 @@ class FishGame {
     const currentAnimations = fish.getAnimations();
     currentAnimations.forEach(animation => animation.cancel());
 
+    console.log(fish.dataset);
     // Update fish direction based on movement
-    fish.className = `${type} fish ${targetX > currentLeft ? 'right' : 'left'}`;
+    // Set base classes
+    fish.classList.remove('left', 'right');
+    fish.classList.add('fish', type);
+
+    // Set direction class
+    fish.classList.add(targetX > currentLeft ? 'right' : 'left');
+
+    // Set hybrid class if needed
+    if (fish.dataset.isHybrid === 'true') {
+      fish.classList.add('hybrid');
+    } else {
+      fish.classList.remove('hybrid');
+    }
 
     // Calculate distance and speed
     const distance = Math.sqrt(
@@ -640,7 +673,15 @@ class FishGame {
 
     if (!fish || !growth) return;
 
-    const fishType = GAME_CONFIG.fishTypes[typeIndex];
+    // Get the correct type index by finding the fish type in GAME_CONFIG
+    const actualTypeIndex = GAME_CONFIG.fishTypes.findIndex(f => f.name === fish.dataset.type);
+    const fishType = GAME_CONFIG.fishTypes[actualTypeIndex];
+
+    if (!fishType) {
+      console.error('Fish type not found:', fish.dataset.type);
+      return;
+    }
+
     const isFullyGrown = parseInt(growth.dataset.growth) === 100;
     const currentHunger = parseFloat(fish.dataset.hunger);
     const canBreed = fish.dataset.canBreed === 'true';
@@ -965,7 +1006,11 @@ class FishGame {
       const offspringFishType = GAME_CONFIG.fishTypes[offspringIndex];
       if (offspringFishType.isHybrid) {
         this.unlockedHybrids.add(offspringType);
-        this.saveGameState(); // Save the game state to persist the unlocked hybrid
+        // Save game state immediately after unlocking a new hybrid
+        this.saveGameState();
+
+        // Update the fish selector to show the new hybrid
+        this.createFishSelector();
       }
 
       // Generate a random name for the offspring
@@ -977,7 +1022,8 @@ class FishGame {
       this.pendingFish = {
         type: offspringType,
         typeIndex: offspringIndex,
-        position: { x: targetX, y: targetY }
+        position: { x: targetX, y: targetY },
+        isHybrid: offspringFishType.isHybrid
       };
 
       // Create celebration effect
@@ -1011,28 +1057,11 @@ class FishGame {
   setupFoodSystem() {
     const feedFishButton = document.getElementById('feedFishButton');
     if (feedFishButton) {
-      feedFishButton.addEventListener('click', () => this.openModal('feedFishModal'));
-    }
-
-    // Add click handlers for food items
-    document.querySelectorAll('.food-item').forEach(item => {
-      item.addEventListener('click', () => {
-        const foodType = item.dataset.food;
-        const foodConfig = GAME_CONFIG.foodTypes.find(f => f.name === foodType);
-
-        if (!foodConfig) return;
-
-        if (this.coins < foodConfig.price) {
-          this.showToast('Not enough coins!', 'error');
-          return;
-        }
-
-        this.updateCoins(-foodConfig.price);
-        this.selectedFood = foodType;
-        this.closeModal('feedFishModal');
-        this.showToast('Click in the tank to drop food!', 'info');
+      feedFishButton.addEventListener('click', () => {
+        this.createFoodItems(); // Create food items when modal opens
+        this.openModal('feedFishModal');
       });
-    });
+    }
 
     // Setup food dropping in tank
     const fishTank = document.getElementById('fish_tank');
@@ -1048,6 +1077,74 @@ class FishGame {
         this.selectedFood = null;
       });
     }
+  }
+
+  createFoodItems() {
+    const foodGrid = document.querySelector('.food-grid');
+    if (!foodGrid) return;
+
+    // Clear existing food items
+    foodGrid.innerHTML = '';
+
+    // Create food items from config
+    GAME_CONFIG.foodTypes.forEach(food => {
+      const foodItem = document.createElement('div');
+      foodItem.className = 'food-item';
+      foodItem.dataset.food = food.name;
+
+      const foodIcon = document.createElement('div');
+      foodIcon.className = `food-icon ${food.name.replace('_', '-')}`;
+
+      const foodInfo = document.createElement('div');
+      foodInfo.className = 'food-info';
+
+      // Create title
+      const title = document.createElement('h3');
+      title.textContent = food.displayName;
+
+      // Create description
+      const description = document.createElement('p');
+      description.textContent = food.description;
+
+      // Create bonus text
+      const bonus = document.createElement('div');
+      bonus.className = 'bonus';
+      const bonuses = [];
+      if (food.hungerRestored) bonuses.push(`+${food.hungerRestored} Hunger`);
+      if (food.growthBonus) bonuses.push(`+${food.growthBonus * 100}% Growth`);
+      if (food.valueBonus) bonuses.push(`+${food.valueBonus * 100}% Value`);
+      if (food.breedingBonus) bonuses.push(`+${food.breedingBonus * 100}% Breeding`);
+      bonus.textContent = bonuses.join(', ');
+
+      // Create price
+      const price = document.createElement('div');
+      price.className = 'price';
+      price.innerHTML = `${food.price} <i class="fas fa-coins"></i>`;
+
+      // Assemble the food item
+      foodInfo.appendChild(title);
+      foodInfo.appendChild(description);
+      foodInfo.appendChild(bonus);
+      foodInfo.appendChild(price);
+
+      foodItem.appendChild(foodIcon);
+      foodItem.appendChild(foodInfo);
+
+      // Add click handler
+      foodItem.addEventListener('click', () => {
+        if (this.coins < food.price) {
+          this.showToast('Not enough coins!', 'error');
+          return;
+        }
+
+        this.updateCoins(-food.price);
+        this.selectedFood = food.name;
+        this.closeModal('feedFishModal');
+        this.showToast('Click in the tank to drop food!', 'info');
+      });
+
+      foodGrid.appendChild(foodItem);
+    });
   }
 
   dropFood(x, y, foodType) {
@@ -1081,6 +1178,20 @@ class FishGame {
     const fishTank = document.getElementById('fish_tank');
     const fish = fishTank.querySelectorAll('.fish');
     fish.forEach(f => f.remove());
+
+    // Clear all timers
+    this.clearTimers();
+
+    // Clear tooltips
+    this.activeTooltips.forEach(tooltip => {
+      if (tooltip.parentNode) {
+        tooltip.remove();
+      }
+    });
+    this.activeTooltips.clear();
+
+    // Clear bonus cache
+    this.bonusCache.clear();
 
     // Reset game state
     this.fishId = 0;
@@ -1185,10 +1296,12 @@ class FishGame {
       const typeIndex = parseInt(fish.dataset.place);
       const fishType = GAME_CONFIG.fishTypes[typeIndex];
       const valueBonus = parseFloat(fish.dataset.valueBonus) || 0;
+      const decorationBonuses = this.getDecorationBonuses(fish);
+      const totalValueBonus = valueBonus + (decorationBonuses.value || 0);
 
       // Base income is 1% of the fish's full grown price per 5 seconds
       const baseIncome = Math.ceil(fishType.fullGrownPrice * 0.01);
-      const bonusIncome = Math.ceil(baseIncome * (1 + valueBonus));
+      const bonusIncome = Math.ceil(baseIncome * (1 + totalValueBonus));
 
       totalIncome += bonusIncome;
 
@@ -1343,8 +1456,16 @@ class FishGame {
           left: decorationElement.style.left,
           top: decorationElement.style.top
         },
-        bonuses: decoration.bonuses
+        bonuses: decoration.bonuses,
+        isAutoFeeder: decoration.isAutoFeeder,
+        feedInterval: decoration.feedInterval,
+        foodType: decoration.foodType
       });
+
+      // Start auto-feeding if it's an auto-feeder
+      if (decoration.isAutoFeeder) {
+        this.startAutoFeeder(this.decorationId);
+      }
 
       this.setupDecorationDragging();
       this.showToast(`Added ${decoration.displayName} to your tank!`, 'success');
@@ -1356,6 +1477,93 @@ class FishGame {
     };
 
     tank.addEventListener('click', placeDecoration);
+  }
+
+  startAutoFeeder(decorationId) {
+    const decoration = this.decorations.get(decorationId);
+    if (!decoration || !decoration.isAutoFeeder) return;
+
+    const decorationElement = document.getElementById(`decoration_${decorationId}`);
+    if (!decorationElement) return;
+
+    // Add attraction zone indicator
+    const attractionZone = document.createElement('div');
+    attractionZone.className = 'attraction-zone';
+    attractionZone.style.width = '400px';
+    attractionZone.style.height = '400px';
+    attractionZone.style.left = '-180px';
+    attractionZone.style.top = '-170px';
+    decorationElement.appendChild(attractionZone);
+
+    const feedFish = () => {
+      if (!document.getElementById(`decoration_${decorationId}`)) {
+        return; // Stop if feeder was removed
+      }
+
+      const rect = decorationElement.getBoundingClientRect();
+      const tankRect = document.getElementById('fish_tank').getBoundingClientRect();
+      const x = rect.left - tankRect.left + rect.width / 2;
+      const y = rect.top - tankRect.top + rect.height;
+
+      // Find hungry fish (limited to nearby area for performance)
+      const hungryFish = Array.from(document.querySelectorAll('.fish')).filter(fish => {
+        const hunger = parseFloat(fish.dataset.hunger);
+        if (hunger >= 100) return false;
+
+        const fishRect = fish.getBoundingClientRect();
+        const fishX = fishRect.left - tankRect.left + fishRect.width / 2;
+        const fishY = fishRect.top - tankRect.top + fishRect.height / 2;
+        const distance = Math.sqrt(Math.pow(x - fishX, 2) + Math.pow(y - fishY, 2));
+
+        return distance <= 200;
+      }).slice(0, 5); // Limit to 5 fish at a time for performance
+
+      if (hungryFish.length > 0) {
+        decorationElement.classList.add('feeding-active');
+        const removeActiveTimer = setTimeout(() => {
+          decorationElement.classList.remove('feeding-active');
+          this.removeTimer(removeActiveTimer);
+        }, 1000);
+        this.addTimer(removeActiveTimer);
+
+        hungryFish.forEach(fish => {
+          const offsetX = (Math.random() - 0.5) * 40;
+          const offsetY = (Math.random() - 0.5) * 40;
+          this.moveToTarget(fish, fish.dataset.type, x + offsetX, y + offsetY);
+        });
+
+        const dropFoodTimer = setTimeout(() => {
+          this.dropFood(x, y, decoration.foodType);
+          if (this.activeTooltips.size < this.maxActiveTooltips) {
+            const feedingEffect = document.createElement('div');
+            feedingEffect.className = 'feeding-effects active';
+            feedingEffect.textContent = '🍽️ Auto Feeding...';
+            feedingEffect.style.left = `${x}px`;
+            feedingEffect.style.top = `${y - 20}px`;
+            document.getElementById('fish_tank').appendChild(feedingEffect);
+
+            const removeEffectTimer = setTimeout(() => {
+              if (feedingEffect.parentNode) {
+                feedingEffect.remove();
+              }
+              this.removeTimer(removeEffectTimer);
+            }, 1500);
+            this.addTimer(removeEffectTimer);
+          }
+          this.removeTimer(dropFoodTimer);
+        }, 500);
+        this.addTimer(dropFoodTimer);
+      } else {
+        this.dropFood(x, y, decoration.foodType);
+      }
+
+      // Schedule next feeding
+      const nextFeedTimer = setTimeout(feedFish, decoration.feedInterval);
+      this.addTimer(nextFeedTimer);
+    };
+
+    // Start the feeding cycle
+    feedFish();
   }
 
   setupDecorationDragging() {
@@ -1475,6 +1683,15 @@ class FishGame {
   }
 
   getDecorationBonuses(fish) {
+    const fishId = fish.dataset.id;
+    const now = Date.now();
+
+    // Check cache first
+    const cached = this.bonusCache.get(fishId);
+    if (cached && now - cached.timestamp < this.bonusCacheTimeout) {
+      return cached.bonuses;
+    }
+
     const bonuses = {
       growth: 0,
       breeding: 0,
@@ -1510,52 +1727,60 @@ class FishGame {
 
       // Check if fish is within bonus area (1.5x decoration width)
       if (distance <= decorRect.width * 1.5) {
-        activeDecorations.push({
-          name: GAME_CONFIG.decorations.find(d => d.name === decoration.type).displayName,
-          bonuses: decoration.bonuses
-        });
+        // Skip auto-feeders and decorations with no bonuses
+        const decorConfig = GAME_CONFIG.decorations.find(d => d.name === decoration.type);
+        if (!decorConfig.isAutoFeeder && Object.keys(decoration.bonuses).length > 0) {
+          activeDecorations.push({
+            name: decorConfig.displayName,
+            bonuses: decoration.bonuses
+          });
 
-        Object.entries(decoration.bonuses).forEach(([key, value]) => {
-          bonuses[key] += value;
-        });
+          Object.entries(decoration.bonuses).forEach(([key, value]) => {
+            bonuses[key] += value;
+          });
+        }
       }
     });
 
+    // Cache the result
+    this.bonusCache.set(fishId, {
+      bonuses,
+      timestamp: now
+    });
+
     if (activeDecorations.length > 0) {
-      // Create bonus indicator
-      const indicator = document.createElement('div');
-      indicator.className = 'active-bonus';
+      // Only show tooltip if we haven't reached the limit
+      if (this.activeTooltips.size < this.maxActiveTooltips) {
+        const indicator = document.createElement('div');
+        indicator.className = 'active-bonus';
 
-      // Add stack count if multiple decorations
-      if (activeDecorations.length > 1) {
-        const stackCount = document.createElement('div');
-        stackCount.className = 'stack-count';
-        stackCount.textContent = activeDecorations.length;
-        indicator.appendChild(stackCount);
+        if (activeDecorations.length > 1) {
+          const stackCount = document.createElement('div');
+          stackCount.className = 'stack-count';
+          stackCount.textContent = activeDecorations.length;
+          indicator.appendChild(stackCount);
+        }
+
+        const tooltip = document.createElement('div');
+        tooltip.className = 'bonus-tooltip';
+
+        const bonusText = Object.entries(bonuses)
+          .filter(([_, value]) => value > 0)
+          .map(([key, value]) => `+${(value * 100).toFixed(0)}% ${key}`)
+          .join(', ');
+
+        const decorationsList = activeDecorations
+          .map(d => d.name)
+          .join(', ');
+
+        tooltip.textContent = `${decorationsList}: ${bonusText}`;
+
+        indicator.style.left = `${fishRect.width / 2}px`;
+        indicator.style.top = `-${fishRect.height + 10}px`;
+
+        this.showTooltip(fish, indicator);
+        this.showTooltip(fish, tooltip);
       }
-
-      // Create tooltip with detailed bonus information
-      const tooltip = document.createElement('div');
-      tooltip.className = 'bonus-tooltip';
-
-      // Format bonus text
-      const bonusText = Object.entries(bonuses)
-        .filter(([_, value]) => value > 0)
-        .map(([key, value]) => `+${(value * 100).toFixed(0)}% ${key}`)
-        .join(', ');
-
-      const decorationsList = activeDecorations
-        .map(d => d.name)
-        .join(', ');
-
-      tooltip.textContent = `${decorationsList}: ${bonusText}`;
-
-      // Position indicator and tooltip
-      indicator.style.left = `${fishRect.width / 2}px`;
-      indicator.style.top = `-${fishRect.height + 10}px`;
-
-      fish.appendChild(indicator);
-      fish.appendChild(tooltip);
     }
 
     return bonuses;
@@ -1603,12 +1828,18 @@ class FishGame {
     const targetY = pelletY + (Math.random() - 0.5) * 20;
 
     // Update fish direction
-    if (targetX > fishX) {
-      fish.classList.remove('left');
-      fish.classList.add('right');
+    // Set base classes
+    fish.classList.remove('left', 'right');
+    fish.classList.add('fish', fish.dataset.type);
+
+    // Set direction class
+    fish.classList.add(targetX > fishX ? 'right' : 'left');
+
+    // Set hybrid class if needed
+    if (fish.dataset.isHybrid === 'true') {
+      fish.classList.add('hybrid');
     } else {
-      fish.classList.remove('right');
-      fish.classList.add('left');
+      fish.classList.remove('hybrid');
     }
 
     // Move fish to food
@@ -1691,6 +1922,48 @@ class FishGame {
         setTimeout(() => tooltipDiv.remove(), 500);
       }
     }, 2000);
+  }
+
+  clearTimers() {
+    // Clear all active timers
+    this.activeTimers.forEach(timer => {
+      clearTimeout(timer);
+      clearInterval(timer);
+    });
+    this.activeTimers.clear();
+  }
+
+  addTimer(timerId) {
+    this.activeTimers.add(timerId);
+  }
+
+  removeTimer(timerId) {
+    this.activeTimers.delete(timerId);
+  }
+
+  showTooltip(element, tooltip) {
+    // Remove oldest tooltip if at max
+    if (this.activeTooltips.size >= this.maxActiveTooltips) {
+      const oldestTooltip = this.activeTooltips.values().next().value;
+      if (oldestTooltip && oldestTooltip.parentNode) {
+        oldestTooltip.remove();
+      }
+      this.activeTooltips.delete(oldestTooltip);
+    }
+
+    element.appendChild(tooltip);
+    this.activeTooltips.add(tooltip);
+
+    // Auto-remove tooltip after delay
+    const timerId = setTimeout(() => {
+      if (tooltip.parentNode) {
+        tooltip.remove();
+      }
+      this.activeTooltips.delete(tooltip);
+      this.removeTimer(timerId);
+    }, 2000);
+
+    this.addTimer(timerId);
   }
 }
 

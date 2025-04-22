@@ -157,8 +157,294 @@ body {
   background-repeat: no-repeat !important;
   background-size: contain !important;
   background-position: center !important;
-  transition: opacity var(--transition-speed);
-  transform-origin: center;
+  transition: transform 0.3s ease-in-out;
+  z-index: 2;
+}
+
+.fish.hybrid {
+  z-index: 3;
+}
+
+.fish-image {
+  position: relative;
+  display: block;
+  background-repeat: no-repeat !important;
+  background-size: contain !important;
+  background-position: center !important;
+  margin: 0 auto;
+  transition: transform 0.3s ease-in-out;
+}
+
+.fish.left,
+.fish-image.left {
+  transform: scaleX(1);
+}
+
+.fish.right,
+.fish-image.right {
+  transform: scaleX(-1);
+}
+
+/* Fish selector styles */
+.fishSelect {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px;
+  margin: 5px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: rgba(255, 255, 255, 0.1);
+  border: 2px solid transparent;
+}
+
+.fishSelect:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
+}
+
+.fishSelect .fish-name {
+  margin-top: 5px;
+  font-size: 14px;
+  color: white;
+  text-align: center;
+}
+
+.fishSelect .fish-price {
+  font-size: 12px;
+  color: gold;
+  margin-top: 3px;
+}
+
+/* Rarity colors */
+.fishSelect.common {
+  border-color: #a8a8a8;
+}
+
+.fishSelect.uncommon {
+  border-color: #1eff00;
+}
+
+.fishSelect.rare {
+  border-color: #0070dd;
+}
+
+.fishSelect.epic {
+  border-color: #a335ee;
+}
+
+.fishSelect.legendary {
+  border-color: #ff8000;
+}
+
+.fishSelect.hybrid {
+  background: rgba(255, 255, 255, 0.15);
+  box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+}
+
+.hybrid-indicator {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  color: gold;
+  font-size: 14px;
+}
+
+/* Base fish styles */
+[class*="fish"].fish,
+[class*="fish"].fish-image {
+  background-repeat: no-repeat !important;
+  background-size: contain !important;
+  background-position: center !important;
+}
+
+/* Individual fish types */
+.goldfish {
+  background-image: url(assets/fish/goldfish.png);
+}
+
+.clownfish {
+  background-image: url(assets/fish/clownfish.png);
+}
+
+.crownfish {
+  background-image: url(assets/fish/crownfish.png);
+}
+
+.neonfish {
+  background-image: url(assets/fish/neonfish.png);
+}
+
+.bass {
+  background-image: url(assets/fish/bass.png);
+}
+
+.marlin {
+  background-image: url(assets/fish/marlin.png);
+}
+
+.starfish {
+  background-image: url(assets/fish/starfish.png);
+}
+
+.jellyfish {
+  background-image: url(assets/fish/jellyfish.png);
+}
+
+.betta_fish {
+  background-image: url(assets/fish/betta_fish.png);
+}
+
+.blue_tang {
+  background-image: url(assets/fish/blue_tang.png);
+}
+
+.pufferfish {
+  background-image: url(assets/fish/pufferfish.png);
+}
+
+.moray_eel {
+  background-image: url(assets/fish/moray_eel.png);
+}
+
+.neonfish_2 {
+  background-image: url(assets/fish/neonfish_2.png);
+}
+
+.neonfish_3 {
+  background-image: url(assets/fish/neonfish_3.png);
+}
+
+.anchovy {
+  background-image: url(assets/fish/anchovy.png);
+}
+
+.european_anchovy {
+  background-image: url(assets/fish/european_anchovy.png);
+}
+
+.sardine {
+  background-image: url(assets/fish/sardine.png);
+}
+
+.yellow_perch {
+  background-image: url(assets/fish/yellow_perch.png);
+}
+
+.bluegill {
+  background-image: url(assets/fish/bluegill.png);
+}
+
+.atlantic_mackerel {
+  background-image: url(assets/fish/atlantic_mackerel.png);
+}
+
+.bluefish {
+  background-image: url(assets/fish/bluefish.png);
+}
+
+.smallmouth_bass {
+  background-image: url(assets/fish/smallmouth_bass.png);
+}
+
+.largemouth_bass {
+  background-image: url(assets/fish/largemouth_bass.png);
+}
+
+.black_dragonfish {
+  background-image: url(assets/fish/black_dragonfish.png);
+}
+
+.sturgeon {
+  background-image: url(assets/fish/sturgeon.png);
+}
+
+.oarfish {
+  background-image: url(assets/fish/oarfish.png);
+}
+
+.giant_isopod {
+  background-image: url(assets/fish/giant_isopod.png);
+}
+
+/* Hybrid fish styles - using base fish images with filters */
+.golden_neon {
+  background-image: url(assets/fish/neonfish.png);
+  filter: sepia(1) hue-rotate(20deg) saturate(2) brightness(1.2);
+}
+
+.rainbow_neon {
+  background-image: url(assets/fish/neonfish.png);
+  animation: rainbow 5s linear infinite;
+}
+
+.crystal_star {
+  background-image: url(assets/fish/starfish.png);
+  filter: hue-rotate(180deg) brightness(1.2);
+  opacity: 0.8;
+}
+
+.royal_clown {
+  background-image: url(assets/fish/clownfish.png);
+  filter: hue-rotate(60deg) saturate(1.5);
+}
+
+.royal_betta {
+  background-image: url(assets/fish/betta_fish.png);
+  filter: hue-rotate(180deg) saturate(2) brightness(1.2);
+}
+
+.giant_bass {
+  background-image: url(assets/fish/bass.png);
+  filter: brightness(1.3) contrast(1.2);
+}
+
+.dragon_eel {
+  background-image: url(assets/fish/moray_eel.png);
+  filter: hue-rotate(120deg) saturate(2) brightness(1.2);
+  animation: glow 2s ease-in-out infinite;
+}
+
+.spiky_puffer {
+  background-image: url(assets/fish/pufferfish.png);
+  filter: hue-rotate(30deg) saturate(1.5) brightness(1.1);
+}
+
+.crystal_betta {
+  background-image: url(assets/fish/betta_fish.png);
+  filter: hue-rotate(180deg) saturate(0.5) brightness(1.4) opacity(0.8);
+  animation: crystal-shimmer 3s ease-in-out infinite;
+}
+
+.ghost_marlin {
+  background-image: url(assets/fish/marlin.png);
+  filter: saturate(0) brightness(1.5) opacity(0.7);
+  animation: ghost-fade 4s ease-in-out infinite;
+}
+
+.prismatic_tang {
+  background-image: url(assets/fish/blue_tang.png);
+  filter: hue-rotate(30deg) saturate(1.5) brightness(1.1);
+  animation: prismatic 6s linear infinite;
+}
+
+.void_isopod {
+  background-image: url(assets/fish/giant_isopod.png);
+  filter: invert(1) hue-rotate(180deg) brightness(0.7);
+  animation: void-pulse 3s ease-in-out infinite;
+}
+
+.golden_sturgeon {
+  background-image: url(assets/fish/sturgeon.png);
+  filter: sepia(1) saturate(2) brightness(1.3);
+  animation: golden-shimmer 2s ease-in-out infinite;
+}
+
+.plasma_jellyfish {
+  background-image: url(assets/fish/jellyfish.png);
+  filter: hue-rotate(90deg) saturate(2) brightness(1.3);
+  animation: plasma-glow 3s ease-in-out infinite;
 }
 
 .fish:hover {
@@ -386,8 +672,9 @@ body {
   flex-direction: column;
   align-items: center;
   gap: 4px;
-  min-height: 90px;
+  min-height: 120px;
   border: 1px solid #e0e0e0;
+  position: relative;
 }
 
 .fish-grid li:hover {
@@ -397,35 +684,23 @@ body {
 
 .fish-grid li .fish-image {
   width: 100%;
-  height: 40px;
+  height: 60px;
   background-size: contain !important;
   background-position: center !important;
   background-repeat: no-repeat !important;
+  margin: 5px 0;
 }
 
-.fish-name {
+.fish-grid li .fish-name {
   font-size: 12px;
   color: #333;
-  margin: 0;
+  margin: 5px 0;
   line-height: 1.2;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
   width: 100%;
-}
-
-.fish-price {
-  color: #ffd700;
-  font-size: 12px;
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  margin-top: 2px;
-}
-
-.fish-price i {
-  color: #FFD700;
-  font-size: 12px;
+  text-align: center;
 }
 
 /* Fish Stats */
@@ -610,176 +885,105 @@ body {
   color: white;
 }
 
-/* Fish Images */
-.goldfish {
-  background-image: url(fish/goldfish.png);
-  width: 41px;
-  height: 19px;
-}
-
-.clownfish {
-  background-image: url(fish/clownfish.png);
-  width: 41px;
-  height: 19px;
-}
-
-.crownfish {
-  background-image: url(fish/crownfish.png);
-  width: 50px;
-  height: 60px;
-}
-
-.neonfish {
-  background-image: url(fish/neonfish.png);
-  width: 45px;
-  height: 19px;
-}
-
-.neonfish_2 {
-  background-image: url(fish/neonfish_2.png);
-  width: 45px;
-  height: 19px;
-}
-
-.neonfish_3 {
-  background-image: url(fish/neonfish_3.png);
-  width: 45px;
-  height: 19px;
-}
-
-.bass {
-  background-image: url(fish/bass.png);
-  width: 52px;
-  height: 20px;
-}
-
-.marlin {
-  background-image: url(fish/marlin.png);
-  width: 80px;
-  height: 20px;
-}
-
-.starfish {
-  background-image: url(fish/starfish.png);
-  width: 30px;
-  height: 30px;
-}
-
-.jellyfish {
-  background-image: url(fish/jellyfish.png);
-  width: 30px;
-  height: 30px;
-  opacity: 0.8;
-}
-
-.anchovy {
-  background-image: url(fish/anchovy.png);
-  width: 40px;
-  height: 20px;
-}
-
-.european_anchovy {
-  background-image: url(fish/european_anchovy.png);
-  width: 40px;
-  height: 20px;
-}
-
-.sardine {
-  background-image: url(fish/sardine.png);
-  width: 45px;
-  height: 20px;
-}
-
-.yellow_perch {
-  background-image: url(fish/yellow_perch.png);
-  width: 50px;
-  height: 25px;
-}
-
-.bluegill {
-  background-image: url(fish/bluegill.png);
-  width: 50px;
-  height: 25px;
-}
-
-.atlantic_mackerel {
-  background-image: url(fish/atlantic_mackerel.png);
-  width: 55px;
-  height: 25px;
-}
-
-.bluefish {
-  background-image: url(fish/bluefish.png);
-  width: 55px;
-  height: 25px;
-}
-
-.smallmouth_bass {
-  background-image: url(fish/smallmouth_bass.png);
-  width: 60px;
-  height: 30px;
-}
-
-.largemouth_bass {
-  background-image: url(fish/largemouth_bass.png);
-  width: 80px;
-  height: 40px;
-}
-
-.betta_fish {
-  background-image: url(fish/betta_fish.png);
-  width: 50px;
-  height: 30px;
-}
-
-.blue_tang {
-  background-image: url(fish/blue_tang.png);
-  width: 55px;
-  height: 30px;
-}
-
-.pufferfish {
-  background-image: url(fish/pufferfish.png);
-  width: 50px;
-  height: 50px;
-}
-
-.moray_eel {
-  background-image: url(fish/moray_eel.png);
-  width: 90px;
-  height: 35px;
-}
-
-.black_dragonfish {
-  background-image: url(fish/black_dragonfish.png);
-  width: 70px;
-  height: 35px;
-}
-
-.sturgeon {
-  background-image: url(fish/sturgeon.png);
-  width: 100px;
-  height: 35px;
-}
-
-.oarfish {
-  background-image: url(fish/oarfish.png);
-  width: 130px;
-  height: 45px;
-}
-
-.giant_isopod {
-  background-image: url(fish/giant_isopod.png);
-  width: 70px;
-  height: 45px;
-}
-
 /* Decoration Sprites */
 .small_plant {
   background-image: url(decorations/small_plant.png);
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
+}
+
+.golden_statue {
+  background-image: url(decorations/golden_statue.png);
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  filter: sepia(0.5) hue-rotate(20deg) saturate(2) brightness(1.2);
+}
+
+.pearl_fountain {
+  background-image: url(decorations/pearl_fountain.png);
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  filter: brightness(1.2) saturate(0.8);
+}
+
+.market_booth {
+  background-image: url(decorations/market_booth.png);
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.coral_formation {
+  background-image: url(decorations/coral_formation.png);
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  filter: saturate(1.2) brightness(1.1);
+}
+
+.auto_feeder {
+  background-image: url(decorations/auto_feeder.png);
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  position: relative;
+}
+
+.auto_feeder .attraction-zone {
+  position: absolute;
+  border: 2px dashed rgba(76, 175, 80, 0.3);
+  border-radius: 50%;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.auto_feeder:hover .attraction-zone {
+  opacity: 0.6;
+}
+
+.auto_feeder.feeding-active {
+  animation: feeder-pulse 1s ease-in-out;
+}
+
+.feeding-effects {
+  position: absolute;
+  padding: 4px 8px;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 12px;
+  font-size: 12px;
+  color: #4CAF50;
+  pointer-events: none;
+  white-space: nowrap;
+  transform: translateX(-50%);
+  opacity: 0;
+  transition: opacity 0.3s, transform 0.3s;
+  z-index: 1000;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.feeding-effects.active {
+  opacity: 1;
+  animation: feeding-float 1.5s ease-out;
+}
+
+@keyframes feeding-float {
+  0% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  20% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-20px);
+  }
 }
 
 .large_plant {
@@ -808,36 +1012,6 @@ body {
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
-}
-
-/* Hybrid Fish */
-.royal_betta {
-  background-image: url(fish/betta_fish.png);
-  width: 55px;
-  height: 35px;
-  filter: hue-rotate(180deg) saturate(2) brightness(1.2);
-}
-
-.giant_bass {
-  background-image: url(fish/bass.png);
-  width: 80px;
-  height: 40px;
-  filter: brightness(1.3) contrast(1.2);
-}
-
-.dragon_eel {
-  background-image: url(fish/moray_eel.png);
-  width: 110px;
-  height: 45px;
-  filter: hue-rotate(120deg) saturate(2) brightness(1.2);
-  animation: glow 2s ease-in-out infinite;
-}
-
-.spiky_puffer {
-  background-image: url(fish/pufferfish.png);
-  width: 60px;
-  height: 60px;
-  filter: hue-rotate(30deg) saturate(1.5) brightness(1.1);
 }
 
 /* Rarity Indicators */
@@ -998,275 +1172,6 @@ body {
   100% {
     transform: translateX(-50%) scale(1);
     filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.8));
-  }
-}
-
-/* Hybrid Fish Types */
-.golden_neon {
-  background-image: url(fish/neonfish.png);
-  width: 45px;
-  height: 19px;
-  filter: sepia(1) hue-rotate(20deg) saturate(2) brightness(1.2);
-}
-
-.rainbow_neon {
-  background-image: url(fish/neonfish.png);
-  width: 45px;
-  height: 19px;
-  animation: rainbow 5s linear infinite;
-}
-
-.crystal_star {
-  background-image: url(fish/starfish.png);
-  width: 30px;
-  height: 30px;
-  filter: hue-rotate(180deg) brightness(1.2);
-  opacity: 0.8;
-}
-
-.royal_clown {
-  background-image: url(fish/clownfish.png);
-  width: 41px;
-  height: 19px;
-  filter: hue-rotate(60deg) saturate(1.5);
-}
-
-@keyframes rainbow {
-  0% {
-    filter: hue-rotate(0deg);
-  }
-
-  100% {
-    filter: hue-rotate(360deg);
-  }
-}
-
-/* Food System Styles */
-.food-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 16px;
-  margin-bottom: 20px;
-}
-
-.food-item {
-  background: #ffffff;
-  padding: 16px;
-  border-radius: var(--border-radius);
-  border: 1px solid #e0e0e0;
-  transition: all var(--transition-speed);
-  display: flex;
-  gap: 16px;
-  align-items: center;
-  cursor: pointer;
-  position: relative;
-  overflow: hidden;
-}
-
-.food-item:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  border-color: var(--primary-color);
-}
-
-/* Remove the "Click to buy" overlay */
-.food-item:hover::after {
-  display: none;
-}
-
-.food-icon {
-  width: 48px;
-  height: 48px;
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: center;
-  flex-shrink: 0;
-  position: relative;
-}
-
-.food-info {
-  flex: 1;
-}
-
-.food-info h3 {
-  margin: 0 0 8px 0;
-  font-size: 1.1em;
-  color: #333;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.food-info p {
-  margin: 4px 0;
-  font-size: 0.9em;
-  color: #666;
-}
-
-.food-info .bonus {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  color: #4CAF50;
-}
-
-.food-info .price {
-  margin-top: 8px;
-  font-weight: 500;
-  color: #FFD700;
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-
-/* Food Pellet Styles */
-.basic-pellet {
-  background-image: url(food/basic_pellet.png);
-  filter: brightness(0.9);
-}
-
-.premium-pellet {
-  background-image: url(food/basic_pellet.png);
-  filter: hue-rotate(200deg) saturate(1.5);
-}
-
-.golden-pellet {
-  background-image: url(food/basic_pellet.png);
-  filter: sepia(1) hue-rotate(320deg) saturate(2) brightness(1.2);
-}
-
-.breeding-pellet {
-  background-image: url(food/basic_pellet.png);
-  filter: hue-rotate(320deg) saturate(2) brightness(1.1);
-}
-
-.rainbow-pellet {
-  background-image: url(food/basic_pellet.png);
-  animation: rainbow 3s linear infinite;
-}
-
-.crystal-pellet {
-  background-image: url(food/basic_pellet.png);
-  filter: hue-rotate(180deg) saturate(0.5) brightness(1.4);
-  opacity: 0.8;
-}
-
-.food-pellet {
-  position: absolute;
-  width: 8px;
-  height: 8px;
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: center;
-  pointer-events: none;
-  transition: all var(--transition-speed);
-  z-index: 10;
-}
-
-.food-pellet.eaten {
-  transform: scale(0);
-  opacity: 0;
-}
-
-.food-pellet.basic {
-  background-color: #8B4513;
-}
-
-.food-pellet.premium {
-  background-color: #4169E1;
-}
-
-.food-pellet.golden {
-  background-color: #FFD700;
-}
-
-.food-pellet.breeding {
-  background-color: #FF69B4;
-}
-
-.food-pellet.rainbow {
-  animation: rainbow 2s linear infinite;
-}
-
-.food-pellet.crystal {
-  background-color: #E0FFFF;
-  box-shadow: 0 0 5px #E0FFFF;
-}
-
-@keyframes float-food {
-  0% {
-    transform: translateY(0) rotate(0deg);
-  }
-
-  50% {
-    transform: translateY(-2px) rotate(5deg);
-  }
-
-  100% {
-    transform: translateY(0) rotate(0deg);
-  }
-}
-
-.food-pellet {
-  animation: float-food 2s infinite;
-}
-
-/* Hungry Fish Animation */
-@keyframes hungry {
-  0% {
-    opacity: 1;
-  }
-
-  50% {
-    opacity: 0.6;
-  }
-
-  100% {
-    opacity: 1;
-  }
-}
-
-.fish.hungry {
-  animation: hungry 2s ease-in-out infinite;
-}
-
-/* Settings Styles */
-.settings-divider {
-  height: 1px;
-  background: #eee;
-  margin: 20px 0;
-}
-
-.reset-warning {
-  margin-top: 8px;
-  color: var(--danger-color);
-  font-size: 0.9em;
-  text-align: center;
-}
-
-/* Feeding Effects */
-.feeding-effects {
-  position: absolute;
-  color: #4CAF50;
-  font-size: 12px;
-  font-weight: 500;
-  pointer-events: none;
-  z-index: 1000;
-  background: rgba(255, 255, 255, 0.9);
-  padding: 4px 8px;
-  border-radius: 12px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  transition: all 0.5s ease-out;
-  white-space: nowrap;
-}
-
-@keyframes rainbow {
-  0% {
-    filter: hue-rotate(0deg) saturate(2);
-  }
-
-  100% {
-    filter: hue-rotate(360deg) saturate(2);
   }
 }
 
@@ -1596,55 +1501,18 @@ body {
   transform: scaleX(-1) translateX(0);
 }
 
-/* New Hybrid Fish Styles */
-.crystal_betta {
-  background-image: url(fish/betta_fish.png);
-  width: 50px;
-  height: 30px;
-  filter: hue-rotate(180deg) saturate(0.5) brightness(1.4) opacity(0.8);
-  animation: crystal-shimmer 3s ease-in-out infinite;
-}
-
-.ghost_marlin {
-  background-image: url(fish/marlin.png);
-  width: 80px;
-  height: 20px;
-  filter: saturate(0) brightness(1.5) opacity(0.7);
-  animation: ghost-fade 4s ease-in-out infinite;
-}
-
-.prismatic_tang {
-  background-image: url(fish/blue_tang.png);
-  width: 55px;
-  height: 30px;
-  animation: prismatic 6s linear infinite;
-}
-
-.void_isopod {
-  background-image: url(fish/giant_isopod.png);
-  width: 70px;
-  height: 45px;
-  filter: invert(1) hue-rotate(180deg) brightness(0.7);
-  animation: void-pulse 3s ease-in-out infinite;
-}
-
-.golden_sturgeon {
-  background-image: url(fish/sturgeon.png);
-  width: 100px;
-  height: 35px;
-  filter: sepia(1) saturate(2) brightness(1.3);
-  animation: golden-shimmer 2s ease-in-out infinite;
-}
-
-.plasma_jellyfish {
-  background-image: url(fish/jellyfish.png);
-  width: 30px;
-  height: 30px;
-  filter: hue-rotate(90deg) saturate(2) brightness(1.3);
-  animation: plasma-glow 3s ease-in-out infinite;
-}
-
 /* New Animations */
+
+@keyframes rainbow {
+  0% {
+    filter: hue-rotate(0deg);
+  }
+
+  100% {
+    filter: hue-rotate(360deg);
+  }
+}
+
 @keyframes crystal-shimmer {
 
   0%,
@@ -1725,4 +1593,13 @@ body {
   50% {
     filter: hue-rotate(140deg) saturate(2.5) brightness(1.4);
   }
+}
+
+.fish-image {
+  position: relative;
+  background-repeat: no-repeat !important;
+  background-size: contain !important;
+  background-position: center !important;
+  width: 100%;
+  height: 40px;
 }

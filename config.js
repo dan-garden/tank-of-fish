@@ -28,6 +28,19 @@ export const GAME_CONFIG = {
       category: 'plants'
     },
     {
+      name: 'auto_feeder',
+      displayName: 'Automatic Fish Feeder',
+      price: 2000,
+      bonuses: {},
+      width: 40,
+      height: 60,
+      category: 'decorative',
+      isAutoFeeder: true,
+      feedInterval: 10000,
+      foodType: 'basic_pellet',
+      attractionRadius: 200
+    },
+    {
       name: 'large_plant',
       displayName: 'Large Plant',
       price: 250,
@@ -71,6 +84,53 @@ export const GAME_CONFIG = {
       },
       width: 40,
       height: 30,
+      category: 'decorative'
+    },
+    {
+      name: 'golden_statue',
+      displayName: 'Golden Fish Statue',
+      price: 1000,
+      bonuses: {
+        value: 0.25 // 25% more value for nearby fish
+      },
+      width: 50,
+      height: 80,
+      category: 'decorative'
+    },
+    {
+      name: 'pearl_fountain',
+      displayName: 'Pearl Fountain',
+      price: 1500,
+      bonuses: {
+        value: 0.2,
+        growth: 0.15 // 20% value and 15% growth
+      },
+      width: 70,
+      height: 90,
+      category: 'decorative'
+    },
+    {
+      name: 'market_booth',
+      displayName: 'Fish Market Booth',
+      price: 800,
+      bonuses: {
+        value: 0.3 // 30% more value but smaller radius
+      },
+      width: 30,
+      height: 40,
+      category: 'buildings'
+    },
+    {
+      name: 'coral_formation',
+      displayName: 'Rare Coral Formation',
+      price: 2000,
+      bonuses: {
+        value: 0.2,
+        growth: 0.1,
+        breeding: 0.1 // All-around bonus decoration
+      },
+      width: 80,
+      height: 70,
       category: 'decorative'
     }
   ],
